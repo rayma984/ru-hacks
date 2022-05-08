@@ -16,7 +16,7 @@ def initialise_bot():
     data = {
         'grant_type': 'password',
         'username': 'redditbotaccount984',
-        'password': "require984"
+        'password': PASS
     }
 
     #identify our API

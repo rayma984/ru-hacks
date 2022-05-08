@@ -187,4 +187,8 @@ async def ex3(interaction: Interaction):
     call()
     await interaction.send(f'Done updating')
 
-bot.run("ODE4NzI2NjM3Njc5NTQyMzAy.GnOr3S.77Rzd3laFRDurb41cz3piRi25ccXWjElMk-3MA")
+
+load_dotenv()
+TOKEN = os.getenv("TOKEN")
+
+bot.run(TOKEN)
