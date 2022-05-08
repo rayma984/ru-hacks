@@ -1,3 +1,4 @@
+from re import sub
 from xmlrpc.client import Boolean
 import requests
 import pandas as pd
@@ -80,13 +81,14 @@ def get_sub_posts(subname, category, headers):
 ########################### paste this^^^ in the main function (needs authentication to run) ###################
 
 #class to hold subreddit name and sub count
-class sub_summary:
-    def __init__(self, sub_name, sub_count):
+class SubData:
+    def __init__(self, sub_name, sub_count, img_link):
         self.subreddit = sub_name
         self.subscribers = int(sub_count)
+        self.pic = img_link
 
     def __repr__(self) -> str:
-        return "{}: {}".format(self.subreddit, self.subscribers)
+        return "{}: {}: {}".format(self.subreddit, self.subscribers, self.pic)
     
 
 # writes to a file all the subreddits that the api could get me
@@ -111,7 +113,9 @@ def get_subreddits(headers, filename):
         for subreddit in raw_data:
             name = subreddit["data"]['display_name']
             subscribers = subreddit["data"]['subscribers']
-            all_subreddits.append(sub_summary(name, subscribers))
+            img_link = get_img(subreddit["data"])
+
+            all_subreddits.append(SubData(name, subscribers, img_link))
             global count
             count += 1
             #we utilize the fact that count is a thing to keep paging thru the reddit api
@@ -181,7 +185,7 @@ def into_list(sub_data, filename):
     raw_data = open(filename, "r")
     for line in raw_data:
         split = line.split(": ")
-        data_pt = sub_summary(split[0], split[1])
+        data_pt = SubData(split[0], split[1], split[2])
         sub_data.append(data_pt)
     raw_data.close()
 ########################### use this to initialize your list ###########################
@@ -287,3 +291,21 @@ def update_data(filename: str, sort: Boolean):
         mergeSort(list)
         print_to_file(list,filename)
     return list
+########################### ########################### ########################### ###########################
+
+# helper function to get the image of a subreddit
+# takes as input subreddit["data"]
+def get_img(data):
+    img_link = data["community_icon"]
+
+    if(img_link != ""): # we have a valid link
+        end_index = img_link.find("?") #ending of the link
+        return img_link[0:end_index]
+    else: # we have a blank img_link
+        img_link = data["icon_img"]
+
+    if(img_link != ""): #icon is ok
+        return img_link
+
+    img_link = "https://cdn.discordapp.com/attachments/933932563569967144/972700446017876008/unknown.png"
+    return img_link
