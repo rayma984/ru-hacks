@@ -279,9 +279,11 @@ def game_start(sub_data):
 # returns a list of all subreddits in sub_summary format
 def update_data(filename: str, sort: Boolean):
     headers = initialise_bot()
-    get_subreddits(headers, filename)
+    get_subreddits(headers, filename) #get the data from API
 
-    list = 
+    list = into_list(list, filename) #put it in a list
 
     if(sort): # if sort=True, sort the list before returning
-
+        mergeSort(list)
+        print_to_file(list,filename)
+    return list
