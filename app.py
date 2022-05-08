@@ -4,6 +4,12 @@ import time
 from nextcord.ext import commands
 from nextcord import Intents, Interaction
 
+import os
+from dotenv import load_dotenv
+load_dotenv()
+#we can remove the above block if you import functions.py (redundancy)
+TOKEN = os.getenv("TOKEN")
+
 intents = Intents.all()
 bot = commands.Bot(intents=intents)
 
@@ -69,4 +75,4 @@ async def ex2(interaction: Interaction):
 
     # await interaction.send(f'Hello: {reactionUpCounter.count}')
 
-bot.run("ODE4NzI2NjM3Njc5NTQyMzAy.GnOr3S.77Rzd3laFRDurb41cz3piRi25ccXWjElMk-3MA")
+bot.run(TOKEN)

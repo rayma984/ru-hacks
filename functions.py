@@ -2,6 +2,11 @@ import requests
 import pandas as pd
 import random as rand
 
+import os
+from dotenv import load_dotenv
+load_dotenv()
+PASS = os.getenv("PASS")
+
 ########################### initialise the auth for the bot ###########################
 def initialise_bot():
     CLIENT_ID = '_PVY5gJ4bDbpwMYhjv01_Q'
@@ -11,7 +16,7 @@ def initialise_bot():
     data = {
         'grant_type': 'password',
         'username': 'redditbotaccount984',
-        'password': 'require984'
+        'password': PASS
     }
 
     #identify our API
