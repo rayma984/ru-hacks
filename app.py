@@ -5,21 +5,15 @@ from functions import *
 from nextcord.ext import commands
 from nextcord import Intents, Interaction
 
-import os
-from dotenv import load_dotenv
-load_dotenv()
-#we can remove the above block if you import functions.py (redundancy)
-TOKEN = os.getenv("TOKEN")
-
 intents = Intents.all()
 bot = commands.Bot(intents=intents)
 
-async def countdown(t):
+async def countdown(t, message):
     
     while t:
         mins, secs = divmod(t, 60)
         timer = '{:02d}:{:02d}'.format(mins, secs)
-        #print(timer, end="\r")
+        
         asyncio.sleep(1)
         t -= 1
 
@@ -29,9 +23,11 @@ async def countdown(t):
     guild_ids=[425353150250221601]
 )
 async def ex2(interaction: Interaction):
-    
-    sub_data = []
 
+    sub_data = []
+    
+    update_data("list of subs.txt", False)
+    print("done\n")
     into_list(sub_data, "list of subs.txt")
     # mergeSort(data)
     print_to_file(sub_data,"sorted.txt")
@@ -169,4 +165,4 @@ async def ex2(interaction: Interaction):
         await cache_msg.edit(embed = embed1)
         #END OF GAME#
 
-bot.run(TOKEN)
+bot.run("ODE4NzI2NjM3Njc5NTQyMzAy.GnOr3S.77Rzd3laFRDurb41cz3piRi25ccXWjElMk-3MA")

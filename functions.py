@@ -1,5 +1,3 @@
-from re import sub
-from xmlrpc.client import Boolean
 import requests
 import pandas as pd
 import random as rand
@@ -281,7 +279,7 @@ def game_start(sub_data):
 ########################### combined function for updating data ###########################
 # this function will write the new data into the given file and will sort if sort=True
 # returns a list of all subreddits in sub_summary format
-def update_data(filename: str, sort: Boolean):
+def update_data(filename: str, sort):
     headers = initialise_bot()
     get_subreddits(headers, filename) #get the data from API
 
@@ -309,3 +307,6 @@ def get_img(data):
 
     img_link = "https://cdn.discordapp.com/attachments/933932563569967144/972700446017876008/unknown.png"
     return img_link
+#################################################################################
+
+
