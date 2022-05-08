@@ -25,9 +25,6 @@ async def countdown(t, message):
 async def ex2(interaction: Interaction):
 
     sub_data = []
-    
-    update_data("list of subs.txt", False)
-    print("done\n")
     into_list(sub_data, "list of subs.txt")
     # mergeSort(data)
     print_to_file(sub_data,"sorted.txt")

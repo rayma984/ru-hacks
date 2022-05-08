@@ -118,8 +118,8 @@ def get_subreddits(headers, filename):
             count += 1
             #we utilize the fact that count is a thing to keep paging thru the reddit api
 
-            file.write("{}: {}\n".format(name, subscribers))
-
+            file.write("{}: {}: {}\n".format(name, subscribers, img_link))
+            print("{}: {}: {}\n".format(name, subscribers, img_link))
             if(count % 25 == 0): #if we reach the page limit, go next
                 last_subreddit = subreddit["data"]['name']
                 url_addon = "?count={}&after={}".format(count,last_subreddit)
@@ -130,6 +130,7 @@ def get_subreddits(headers, filename):
                 get_info(raw_data)
 
     get_info(raw_data)
+    return all_subreddits
 
     file.close()
 ########################### code to be put in the main func ###########################
@@ -281,9 +282,7 @@ def game_start(sub_data):
 # returns a list of all subreddits in sub_summary format
 def update_data(filename: str, sort):
     headers = initialise_bot()
-    get_subreddits(headers, filename) #get the data from API
-
-    list = into_list(list, filename) #put it in a list
+    list = get_subreddits(headers, filename) #get the data from API
 
     if(sort): # if sort=True, sort the list before returning
         mergeSort(list)
@@ -308,5 +307,3 @@ def get_img(data):
     img_link = "https://cdn.discordapp.com/attachments/933932563569967144/972700446017876008/unknown.png"
     return img_link
 #################################################################################
-
-
