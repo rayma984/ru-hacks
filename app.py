@@ -8,15 +8,6 @@ from nextcord import Intents, Interaction
 intents = Intents.all()
 bot = commands.Bot(intents=intents)
 
-async def countdown(t, message):
-    
-    while t:
-        mins, secs = divmod(t, 60)
-        timer = '{:02d}:{:02d}'.format(mins, secs)
-        
-        asyncio.sleep(1)
-        t -= 1
-
 @bot.slash_command(
     name="ping",
     description="pong!",
@@ -38,7 +29,7 @@ async def ex2(interaction: Interaction):
     first_sub = get_rand_sub(num_subs, sub_data)
 
     embed1 = nextcord.Embed(title="Higher Or Lower Reddit Edition")
-    embed1.set_image(url = "https://external-preview.redd.it/iDdntscPf-nfWKqzHRGFmhVxZm4hZgaKe5oyFws-yzA.png?width=640&crop=smart&auto=webp&s=bfd318557bf2a5b3602367c9c4d9cd84d917ccd5") 
+    embed1.set_image(url = first_sub.pic) 
     tempStr =  first_sub.subreddit + ", {}\n".format(first_sub.subscribers)
     embed1.add_field(name="Reddit 1", value=tempStr, inline=False)
 
@@ -47,7 +38,7 @@ async def ex2(interaction: Interaction):
     ensure_difference(num_subs, sub_data, first_sub, second_sub)
 
     embed2 = nextcord.Embed()
-    embed2.set_image(url = "https://external-preview.redd.it/iDdntscPf-nfWKqzHRGFmhVxZm4hZgaKe5oyFws-yzA.png?width=640&crop=smart&auto=webp&s=bfd318557bf2a5b3602367c9c4d9cd84d917ccd5")
+    embed2.set_image(url = second_sub.pic)
     tempStr =  second_sub.subreddit + "\n"
     embed2.add_field(name="Reddit 2", value=tempStr, inline=False)
 
@@ -77,7 +68,19 @@ async def ex2(interaction: Interaction):
     await vote.add_reaction("⬆")
     await vote.add_reaction("⬇")
 
-    await asyncio.sleep(10)
+    t = 10
+    while t:
+        mins, secs = divmod(t, 60)
+        timer = '{:02d}:{:02d}'.format(mins, secs)
+        embed2 = nextcord.Embed()
+        embed2.set_image(url = second_sub.pic)
+        tempStr =  second_sub.subreddit + "\n"
+        embed2.add_field(name="Reddit 2", value=tempStr, inline=False)
+        embed2.add_field(name="Timer", value=timer, inline=False)
+        await vote.edit(embed = embed2)
+        await asyncio.sleep(1)
+        t -= 1
+    
     cache_msg = await vote.channel.fetch_message(vote.id)
 
     for x in cache_msg.reactions: 
@@ -98,9 +101,9 @@ async def ex2(interaction: Interaction):
     if(not result): #the guess was wrong
         embed1 = nextcord.Embed(title="Higher Or Lower Reddit Edition")
         tempStr = "Incorrect! {} has {} subscribers".format(second_sub.subreddit, second_sub.subscribers)
-        embed1.add_field(name="Field1", value=tempStr, inline=False)
+        embed1.add_field(name="Answer", value=tempStr, inline=False)
         tempStr = "Game Over, your score: {}".format(score)
-        embed1.add_field(name="Field2", value=tempStr, inline=False)
+        embed1.add_field(name="Result", value=tempStr, inline=False)
         await cache_msg.edit(embed = embed1)
     
     else:           #the guess was right! continue the game
@@ -112,7 +115,7 @@ async def ex2(interaction: Interaction):
             #generate new subreddit
             first_sub = second_sub
             embed1 = nextcord.Embed(title="Higher Or Lower Reddit Edition")
-            embed1.set_image(url = "https://external-preview.redd.it/iDdntscPf-nfWKqzHRGFmhVxZm4hZgaKe5oyFws-yzA.png?width=640&crop=smart&auto=webp&s=bfd318557bf2a5b3602367c9c4d9cd84d917ccd5") 
+            embed1.set_image(url =  first_sub.pic) 
             tempStr =  first_sub.subreddit + ", {}\n".format(first_sub.subscribers)
             embed1.add_field(name="Reddit 1", value=tempStr, inline=False)
             await original.edit(embed = embed1)
@@ -122,7 +125,7 @@ async def ex2(interaction: Interaction):
             ensure_difference(num_subs, sub_data, first_sub, second_sub)
             tempStr = "Correct! Your score: {}\n".format(score)
             embed1 = nextcord.Embed(title=tempStr)
-            embed1.set_image(url = "https://external-preview.redd.it/iDdntscPf-nfWKqzHRGFmhVxZm4hZgaKe5oyFws-yzA.png?width=640&crop=smart&auto=webp&s=bfd318557bf2a5b3602367c9c4d9cd84d917ccd5")
+            embed1.set_image(url = second_sub.pic)
             tempStr =  second_sub.subreddit + "\n"
             embed1.add_field(name="Reddit 2", value=tempStr, inline=False)
             await cache_msg.edit(embed = embed1)
@@ -135,7 +138,19 @@ async def ex2(interaction: Interaction):
             await vote.add_reaction("⬆")
             await vote.add_reaction("⬇")
 
-            await asyncio.sleep(10)
+            t = 10
+            while t:
+                mins, secs = divmod(t, 60)
+                timer = '{:02d}:{:02d}'.format(mins, secs)
+                embed2 = nextcord.Embed()
+                embed2.set_image(url = second_sub.pic)
+                tempStr =  second_sub.subreddit + "\n"
+                embed2.add_field(name="Reddit 2", value=tempStr, inline=False)
+                embed2.add_field(name="Timer", value=timer, inline=False)
+                await vote.edit(embed = embed2)
+                await asyncio.sleep(1)
+                t -= 1
+
             cache_msg = await vote.channel.fetch_message(vote.id)
 
             for x in cache_msg.reactions: 
@@ -156,9 +171,9 @@ async def ex2(interaction: Interaction):
         #player has died
         embed1 = nextcord.Embed(title="Higher Or Lower Reddit Edition")
         tempStr = "Incorrect! {} has {} subscribers".format(second_sub.subreddit, second_sub.subscribers)
-        embed1.add_field(name="Field1", value=tempStr, inline=False)
+        embed1.add_field(name="Answer", value=tempStr, inline=False)
         tempStr = "Game Over, your score: {}".format(score)
-        embed1.add_field(name="Field2", value=tempStr, inline=False)
+        embed1.add_field(name="Result", value=tempStr, inline=False)
         await cache_msg.edit(embed = embed1)
         #END OF GAME#
 
