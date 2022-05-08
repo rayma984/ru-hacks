@@ -9,8 +9,8 @@ intents = Intents.all()
 bot = commands.Bot(intents=intents)
 
 @bot.slash_command(
-    name="ping",
-    description="pong!",
+    name="play",
+    description="Higher or Lower - Reddit edition!",
     guild_ids=[425353150250221601]
 )
 async def ex2(interaction: Interaction):
@@ -176,5 +176,15 @@ async def ex2(interaction: Interaction):
         embed1.add_field(name="Result", value=tempStr, inline=False)
         await cache_msg.edit(embed = embed1)
         #END OF GAME#
+
+@bot.slash_command(
+    name="update",
+    description="Update Data",
+    guild_ids=[425353150250221601]
+    )
+async def ex3(interaction: Interaction):
+    await interaction.send(f'updating...')
+    call()
+    await interaction.send(f'Done updating')
 
 bot.run("ODE4NzI2NjM3Njc5NTQyMzAy.GnOr3S.77Rzd3laFRDurb41cz3piRi25ccXWjElMk-3MA")

@@ -16,7 +16,7 @@ def initialise_bot():
     data = {
         'grant_type': 'password',
         'username': 'redditbotaccount984',
-        'password': PASS
+        'password': "require984"
     }
 
     #identify our API
@@ -307,3 +307,10 @@ def get_img(data):
     img_link = "https://cdn.discordapp.com/attachments/933932563569967144/972700446017876008/unknown.png"
     return img_link
 #################################################################################
+
+
+########################Function to call update_data#############################################
+def call():
+    print("Loading subreddits...")
+    update_data("list of subs.txt", True)
+    return
