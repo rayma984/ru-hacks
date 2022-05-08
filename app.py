@@ -1,6 +1,8 @@
+from queue import Empty
 import nextcord
-import asyncio
 import time
+import asyncio
+from functions import *
 from nextcord.ext import commands
 from nextcord import Intents, Interaction
 
@@ -28,51 +30,144 @@ async def countdown(t):
     guild_ids=[425353150250221601]
 )
 async def ex2(interaction: Interaction):
-    embed1 = nextcord.Embed(title="Wordle", description="hello new york", url = "https://www.nytimes.com/games/wordle/index.html")
-    embed1.set_image(url = "https://styles.redditmedia.com/t5_2rvxp/styles/communityIcon_9msefvyceyv51.jpg?") 
-    # embed1.set_thumbnail(url = "https://b.thumbs.redditmedia.com/zgZBtjEP0iu9OWnybsjd1YqBehlb-c9dfqee1rXitbs.png") 
-    embed1.add_field(name="Field1", value="hi", inline=False)
-    embed1.add_field(name="Field2", value="hi2", inline=False)
-    embed2 = nextcord.Embed(url = "https://www.nytimes.com/games/wordle/index.html")
-    embed2.set_image(url = "https://b.thumbs.redditmedia.com/zgZBtjEP0iu9OWnybsjd1YqBehlb-c9dfqee1rXitbs.png")
-    embed = [embed1, embed2]
-    # await interaction.send("https://b.thumbs.redditmedia.com/zgZBtjEP0iu9OWnybsjd1YqBehlb-c9dfqee1rXitbs.png")
+    
+    sub_data = []
+
+    into_list(sub_data, "list of subs.txt")
+    # mergeSort(data)
+    print_to_file(sub_data,"sorted.txt")
+
+    score = 0
+
+    #await interaction.send("Game Start!")
+
+    #pick a random entry from sub_data
+    num_subs = len(sub_data)
+    first_sub = get_rand_sub(num_subs, sub_data)
+
+    embed1 = nextcord.Embed(title="Higher Or Lower Reddit Edition")
+    embed1.set_image(url = "https://external-preview.redd.it/iDdntscPf-nfWKqzHRGFmhVxZm4hZgaKe5oyFws-yzA.png?width=640&crop=smart&auto=webp&s=bfd318557bf2a5b3602367c9c4d9cd84d917ccd5") 
+    tempStr =  first_sub.subreddit + ", {}\n".format(first_sub.subscribers)
+    embed1.add_field(name="Reddit 1", value=tempStr, inline=False)
+
+    #pick the second sub
+    second_sub = get_rand_sub(num_subs, sub_data)
+    ensure_difference(num_subs, sub_data, first_sub, second_sub)
+
+    embed2 = nextcord.Embed()
+    embed2.set_image(url = "https://external-preview.redd.it/iDdntscPf-nfWKqzHRGFmhVxZm4hZgaKe5oyFws-yzA.png?width=640&crop=smart&auto=webp&s=bfd318557bf2a5b3602367c9c4d9cd84d917ccd5")
+    tempStr =  second_sub.subreddit + "\n"
+    embed2.add_field(name="Reddit 2", value=tempStr, inline=False)
+
     await interaction.send(embed = embed1)
     await interaction.send(embed = embed2)
 
-    # Could I do vote = await.interaction.send() instead to get the message???
     async for message in interaction.channel.history():
         if not message.embeds:
             continue
-        if message.embeds[0].title == embed1.title:
+        if message.embeds[0].title == embed2.title:
             vote = message
             break
     else:
         # something broke
         return
 
+    async for message in interaction.channel.history():
+        if not message.embeds:
+            continue
+        if message.embeds[0].title == embed1.title:
+            original = message
+            break
+    else:
+        # something broke
+        return 
+
     await vote.add_reaction("⬆")
     await vote.add_reaction("⬇")
-    #await countdown(5)
-    #await interaction.send(vote.reactions)
-    await asyncio.sleep(5)
-    cache_msg = await vote.channel.fetch_message(vote.id)
-   # cache_msg = nextcord.utils.get(bot.cached_messages, id=vote.id)
 
-    await interaction.send(cache_msg.reactions)
+    await asyncio.sleep(10)
+    cache_msg = await vote.channel.fetch_message(vote.id)
 
     for x in cache_msg.reactions: 
         if x.emoji == "⬆":
             upArrow = x.count
         if x.emoji == "⬇":
             downArrow = x.count
+
+    if upArrow > downArrow:
+        resp = "2"
+    elif downArrow > upArrow:
+        resp = "1"
+    else: 
+        resp = "1"
+
+    result = handle_response(resp, first_sub, second_sub)
+
+    if(not result): #the guess was wrong
+        embed1 = nextcord.Embed(title="Higher Or Lower Reddit Edition")
+        tempStr = "Incorrect! {} has {} subscribers".format(second_sub.subreddit, second_sub.subscribers)
+        embed1.add_field(name="Field1", value=tempStr, inline=False)
+        tempStr = "Game Over, your score: {}".format(score)
+        embed1.add_field(name="Field2", value=tempStr, inline=False)
+        await cache_msg.edit(embed = embed1)
     
-    await interaction.send(f'{upArrow} and {downArrow}')
+    else:           #the guess was right! continue the game
+        while(result):
+            score +=1
+
+            result = False
+
+            #generate new subreddit
+            first_sub = second_sub
+            embed1 = nextcord.Embed(title="Higher Or Lower Reddit Edition")
+            embed1.set_image(url = "https://external-preview.redd.it/iDdntscPf-nfWKqzHRGFmhVxZm4hZgaKe5oyFws-yzA.png?width=640&crop=smart&auto=webp&s=bfd318557bf2a5b3602367c9c4d9cd84d917ccd5") 
+            tempStr =  first_sub.subreddit + ", {}\n".format(first_sub.subscribers)
+            embed1.add_field(name="Reddit 1", value=tempStr, inline=False)
+            await original.edit(embed = embed1)
 
 
+            second_sub = get_rand_sub(num_subs, sub_data)
+            ensure_difference(num_subs, sub_data, first_sub, second_sub)
+            tempStr = "Correct! Your score: {}\n".format(score)
+            embed1 = nextcord.Embed(title=tempStr)
+            embed1.set_image(url = "https://external-preview.redd.it/iDdntscPf-nfWKqzHRGFmhVxZm4hZgaKe5oyFws-yzA.png?width=640&crop=smart&auto=webp&s=bfd318557bf2a5b3602367c9c4d9cd84d917ccd5")
+            tempStr =  second_sub.subreddit + "\n"
+            embed1.add_field(name="Reddit 2", value=tempStr, inline=False)
+            await cache_msg.edit(embed = embed1)
 
-    # reactionUpCounter = nextcord.utils.get(vote.reactions, emoji = "⬆")
+            cache_msg = await vote.channel.fetch_message(vote.id)
+            for x in cache_msg.reactions: 
+                for user in await x.users().flatten():
+                    if user != bot.user: #check if the user is the bot, might be slightly different for you
+                        await x.remove(user)
+            await vote.add_reaction("⬆")
+            await vote.add_reaction("⬇")
 
-    # await interaction.send(f'Hello: {reactionUpCounter.count}')
+            await asyncio.sleep(10)
+            cache_msg = await vote.channel.fetch_message(vote.id)
+
+            for x in cache_msg.reactions: 
+                if x.emoji == "⬆":
+                    upArrow = x.count
+                if x.emoji == "⬇":
+                    downArrow = x.count
+
+            if upArrow > downArrow:
+                resp = "2"
+            elif downArrow > upArrow:
+                resp = "1"
+            else: 
+                resp = "1"
+
+            result = handle_response(resp, first_sub, second_sub)
+        
+        #player has died
+        embed1 = nextcord.Embed(title="Higher Or Lower Reddit Edition")
+        tempStr = "Incorrect! {} has {} subscribers".format(second_sub.subreddit, second_sub.subscribers)
+        embed1.add_field(name="Field1", value=tempStr, inline=False)
+        tempStr = "Game Over, your score: {}".format(score)
+        embed1.add_field(name="Field2", value=tempStr, inline=False)
+        await cache_msg.edit(embed = embed1)
+        #END OF GAME#
 
 bot.run(TOKEN)

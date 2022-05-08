@@ -1,3 +1,4 @@
+from xmlrpc.client import Boolean
 import requests
 import pandas as pd
 import random as rand
@@ -88,8 +89,8 @@ class sub_summary:
         return "{}: {}".format(self.subreddit, self.subscribers)
     
 
-#prints and writes to a file all the subreddits that the api could get me
-def get_subreddits(headers):
+# writes to a file all the subreddits that the api could get me
+def get_subreddits(headers, filename):
     base_url = 'https://oauth.reddit.com/reddits.json'
 
     all_subreddits = []
@@ -103,8 +104,8 @@ def get_subreddits(headers):
     global count
     count = 0
 
-    open("list of subs.txt", "w").close() #clears the textfile first
-    file = open("list of subs.txt", "a")
+    open(filename, "w").close() #clears the textfile first
+    file = open(filename, "a")
 
     def get_info(raw_data):
         for subreddit in raw_data:
@@ -115,7 +116,6 @@ def get_subreddits(headers):
             count += 1
             #we utilize the fact that count is a thing to keep paging thru the reddit api
 
-            print("{}: {}".format(name, subscribers))
             file.write("{}: {}\n".format(name, subscribers))
 
             if(count % 25 == 0): #if we reach the page limit, go next
@@ -272,3 +272,16 @@ def game_start(sub_data):
         #END OF GAME#
 
 ########################### Pass in a list of sub_summaries ###########################
+
+
+########################### combined function for updating data ###########################
+# this function will write the new data into the given file and will sort if sort=True
+# returns a list of all subreddits in sub_summary format
+def update_data(filename: str, sort: Boolean):
+    headers = initialise_bot()
+    get_subreddits(headers, filename)
+
+    list = 
+
+    if(sort): # if sort=True, sort the list before returning
+
