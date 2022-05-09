@@ -14,7 +14,7 @@ bot = commands.Bot(intents=intents)
     guild_ids=[425353150250221601]
 )
 async def ex2(interaction: Interaction):
-
+    await interaction.send("Click the up arrow if you think the second subreddit has more members than the first, and the down arrow if you think it has fewer members")
     sub_data = []
     into_list(sub_data, "list of subs.txt")
     # mergeSort(data)

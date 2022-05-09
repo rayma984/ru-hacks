@@ -119,7 +119,7 @@ def get_subreddits(headers, filename):
             #we utilize the fact that count is a thing to keep paging thru the reddit api
 
             file.write("{}: {}: {}\n".format(name, subscribers, img_link))
-            print("{}: {}: {}\n".format(name, subscribers, img_link))
+            print("{}: {}: {}".format(name, subscribers, img_link))
             if(count % 25 == 0): #if we reach the page limit, go next
                 last_subreddit = subreddit["data"]['name']
                 url_addon = "?count={}&after={}".format(count,last_subreddit)
