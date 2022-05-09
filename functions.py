@@ -1,5 +1,4 @@
 import requests
-import pandas as pd
 import random as rand
 
 import os
@@ -36,42 +35,39 @@ def initialise_bot():
 # SAMPLE = requests.get("https://oauth.reddit.com/r/python/hot", headers=headers)
 ########################### returns headers for future API calls ###########################
 
+class PostData:
+    def __init__(self, title, desc, op, ups, downs):
+        self.title = title
+        self.desc = desc
+        self.op = op
+        self.ups = int (ups)
+        self.downs = int (downs)
+
+    def __repr__(self) -> str:
+        return f"Title: {self.title} By: {self.op}\nDesc: {self.desc}\nUpvotes: {self.ups} Downvotes: {self.downs}"
+
 #prints a data frame of post info using the given subreddit name and category. Will assume valid inputs (must also send headers)
-def get_sub_posts(subname, category, headers):
+def get_sub_posts(subname, category):
+    headers = initialise_bot()
     res = requests.get("https://oauth.reddit.com/r/" + subname + "/" + category, headers=headers)
 
-    #since df = df.append will be depricated later, we have to create lists and create a df at the end
-    subreddits = []
-    titles = []
-    selftext = []
-    upvote_ratio = []
-    ups = []
-    downs = []
-    score = []
+    posts = []
 
     # loop through each post retrieved from GET request
     for post in res.json()['data']['children']:
-        # append relevant data to dataframe
+        title = post["data"]["title"]
+        op = post["data"]["author"]
+        desc = post["data"]["selftext"]
+        ups = post["data"]["ups"]
+        downs = post["data"]["downs"]
+        curr_post = PostData(title,desc,op,ups,downs)
+        posts.append(curr_post)
+        print(title)
 
-        subreddits.append(post['data']['subreddit'])
-        titles.append(post['data']['title'])
-        selftext.append(post['data']['selftext'])
-        upvote_ratio.append(post['data']['upvote_ratio'])
-        ups.append(post['data']['ups'])
-        downs.append(post['data']['downs'])
-        score.append(post['data']['score'])
+get = input("enter sub name")
+cat = input("enter category")
+get_sub_posts(get, cat)
 
-    df = pd.DataFrame({
-        'subreddit': subreddits,
-        'title' : titles,
-        'selftext' : selftext,
-        'upvote_ratio' : upvote_ratio,
-        'ups' : ups,
-        'downs' : downs,
-        'score' : score
-    })
-
-    print(df)
 ########################### code to be put in the main func ###########################
 # subreddit = input('Enter the subreddit name: ')
 # category = input('Enter the category you want to see (hot,new,rising): ')

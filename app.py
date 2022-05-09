@@ -101,6 +101,7 @@ async def ex2(interaction: Interaction):
     if(not result): #the guess was wrong
         embed1 = nextcord.Embed(title="Higher Or Lower Reddit Edition")
         tempStr = "Incorrect! {} has {} subscribers".format(second_sub.subreddit, second_sub.subscribers)
+        print("L + ratio + game ended")
         embed1.add_field(name="Answer", value=tempStr, inline=False)
         tempStr = "Game Over, your score: {}".format(score)
         embed1.add_field(name="Result", value=tempStr, inline=False)
