@@ -1,9 +1,10 @@
+from webbrowser import get
 import nextcord
 import time
 import asyncio
 from functions import *
 from nextcord.ext import commands
-from nextcord import Intents, Interaction
+from nextcord import Intents, Interaction, SlashOption
 
 intents = Intents.all()
 bot = commands.Bot(intents=intents)
@@ -187,6 +188,32 @@ async def ex3(interaction: Interaction):
     await interaction.send(f'updating...')
     call()
     await interaction.send(f'Done updating')
+
+
+@bot.slash_command(
+    name="load_up",
+    description="Fetch reddit posts",
+    guild_ids=[425353150250221601]
+    )
+async def ex4(interaction: Interaction, 
+    subreddit: str = SlashOption(
+        name="subreddit",
+        description="Choose a subreddit",
+        required=True # this doesnt work. returns a SlashOption, not a str
+    ),
+    category: str = SlashOption(
+        name="category",
+        description="Choose a category",
+        required=True,
+        choices=["new", "hot", "rising", "top"],
+    ), top: str = SlashOption(
+        name="category",
+        description="Choose a time for filtering 'top'",
+        required=False,
+        choices=["new", "hot", "rising", "top"],
+    ),):
+    get_sub_posts(subreddit,category)
+    await interaction.send("filler for the load_up command")
 
 
 load_dotenv()

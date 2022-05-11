@@ -46,7 +46,7 @@ class PostData:
     def __repr__(self) -> str:
         return f"Title: {self.title} By: {self.op}\nDesc: {self.desc}\nUpvotes: {self.ups} Downvotes: {self.downs}"
 
-#prints a data frame of post info using the given subreddit name and category. Will assume valid inputs (must also send headers)
+#gets posts from a subreddit
 def get_sub_posts(subname, category):
     headers = initialise_bot()
     res = requests.get("https://oauth.reddit.com/r/" + subname + "/" + category, headers=headers)
@@ -63,10 +63,6 @@ def get_sub_posts(subname, category):
         curr_post = PostData(title,desc,op,ups,downs)
         posts.append(curr_post)
         print(title)
-
-get = input("enter sub name")
-cat = input("enter category")
-get_sub_posts(get, cat)
 
 ########################### code to be put in the main func ###########################
 # subreddit = input('Enter the subreddit name: ')
